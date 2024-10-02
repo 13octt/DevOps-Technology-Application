@@ -18,8 +18,8 @@ resource "aws_internet_gateway" "igw" {
 
 // Public Subnets with Internet Gateway
 resource "aws_subnet" "public-subnet" {
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = var.public_subnet_cidr
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = var.public_subnet_cidr
   map_public_ip_on_launch = "true"
   tags = {
     Name = "lab1_public_subnet"
@@ -28,8 +28,8 @@ resource "aws_subnet" "public-subnet" {
 
 // Private Subnets 
 resource "aws_subnet" "private-subnet" {
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = var.private_subnet_cidr
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = var.private_subnet_cidr
   map_public_ip_on_launch = "false"
   tags = {
     Name = "lab1_private_subnet"
@@ -50,15 +50,13 @@ resource "aws_route_table" "public" {
 }
 
 
-resource "aws_eip" "nat" {
-  vpc = "true"
-}
+resource "aws_eip" "nat" {}
 
 // Nat Gateway
 resource "aws_nat_gateway" "nat-gw" {
   allocation_id = aws_eip.nat.id
-  subnet_id = aws_subnet.public-subnet.id
-  depends_on = [ aws_internet_gateway.igw ]
+  subnet_id     = aws_subnet.public-subnet.id
+  depends_on    = [aws_internet_gateway.igw]
 
 }
 
@@ -67,7 +65,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
 
   route = {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat-gw.id
   }
 
@@ -83,8 +81,8 @@ resource "aws_route_table_association" "public-association" {
 }
 
 # Connect Private Subnet with NAT Gateway
-resource "aws_route_table_association" "privateassociation" {
-  subnet_id = aws_subnet.private-subnet.id
+resource "aws_route_table_association" "private-association" {
+  subnet_id      = aws_subnet.private-subnet.id
   route_table_id = aws_route_table.private.id
 }
 
