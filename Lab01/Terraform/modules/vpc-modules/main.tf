@@ -17,7 +17,7 @@ resource "aws_internet_gateway" "igw" {
 }
 
 // Public Subnets with Internet Gateway
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public-subnet" {
   vpc_id = aws_vpc.vpc.id
   cidr_block = var.public_subnet_cidr
   map_public_ip_on_launch = "true"
@@ -27,7 +27,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 // Private Subnets 
-resource "aws_subnet" "private_subnet" {
+resource "aws_subnet" "private-subnet" {
   vpc_id = aws_vpc.vpc.id
   cidr_block = var.private_subnet_cidr
   map_public_ip_on_launch = "false"
@@ -64,14 +64,14 @@ resource "aws_route_table" "private" {
 }
 
 # Connect Public Subnet with Internet Gateway
-resource "aws_route_table_association" "public_association" {
-  subnet_id      = aws_subnet.public_subnet.id
+resource "aws_route_table_association" "public-association" {
+  subnet_id      = aws_subnet.public-subnet.id
   route_table_id = aws_route_table.public.id
 }
 
 # Connect Private Subnet with NAT Gateway
-resource "aws_route_table_association" "private_association" {
-  subnet_id = aws_subnet.private_subnet.id
+resource "aws_route_table_association" "privateassociation" {
+  subnet_id = aws_subnet.private-subnet.id
   route_table_id = aws_route_table.private.id
 }
 
