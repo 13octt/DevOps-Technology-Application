@@ -90,9 +90,10 @@ resource "aws_route_table_association" "private-association" {
   route_table_id = aws_route_table.rtb_private.id
 }
 
-# AWS Security group
-resource "aws_security_group" "ssh_sg" {
-  name   = "ssh_security_group"
+# AWS Public EC2 Security group
+resource "aws_security_group" "public_ec2_sg" {
+  name   = "public_ec2_sg"
+  description = "Public Security Group for EC2"
   vpc_id = aws_vpc.vpc.id
 
   ingress {
@@ -110,6 +111,32 @@ resource "aws_security_group" "ssh_sg" {
   }
 
   tags = {
-    Name = "lab1_security_group"
+    Name = "lab1_public_security_group"
   }
 }
+
+# AWS Private EC2 Security group
+resource "aws_security_group" "private_ec2_sg" {
+  name        = "private_ec2_sg"
+  description = "Private Security Group for EC2"
+  vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 22  
+    to_port     = 22  
+    protocol    = "tcp"
+    security_groups = [aws_security_group.public_ec2_sg.id]  
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lab1_private_security_group"
+  }
+}
+
