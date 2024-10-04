@@ -41,5 +41,3 @@ resource "aws_subnet" "private_subnet" {
     Name = "lab1_private_subnet"
   }
 }
-
-// Default security group
