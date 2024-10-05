@@ -40,3 +40,4 @@ resource "aws_subnet" "private_subnet" {
   tags = {
     Name = "lab1_private_subnet"
   }
+}
