@@ -1,6 +1,6 @@
 // AWS VPC 
 resource "aws_vpc" "vpc" {
-  cidr_block           = var.vpc_block_cidr
+  cidr_block           = var.vpc_id
   enable_dns_hostnames = true
   enable_dns_support   = true
 
@@ -40,4 +40,3 @@ resource "aws_subnet" "private_subnet" {
   tags = {
     Name = "lab1_private_subnet"
   }
-}
