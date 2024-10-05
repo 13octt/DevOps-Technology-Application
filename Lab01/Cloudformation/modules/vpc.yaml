@@ -2,4 +2,68 @@ Parameters:
   VpcCIDR:
     Description: CIDR VPC
     Type: String
-    Default: 10.192.0.0/16
+
+  PublicSubnetCIDR:
+    Description: Public Subnet CIDR
+    Type: String
+
+  PrivateSubnetCIDR:
+    Description: Private Subnet CIDR
+    Type: String
+
+  AvailabilityZone:
+    Description: Availability zone
+    Type: String
+
+Resources:
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: Name
+          Value: lab1_vpc
+
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags: 
+        - Key: Name
+          Value: lab1_internet_gateway
+
+  myVpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref myVPC
+      InternetGatewayId: 
+        Ref: myInternetGateway
+
+  myPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      AvailabilityZone: "us-east-1a"
+      CidrBlock: "10.0.0.0/24"
+      MapPublicIpOnLaunch: "false"
+      Tags: 
+        - Key: Name
+          Value: lab1_private_subnet
+
+  myPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      AvailabilityZone: "us-east-1a"
+      CidrBlock: "10.0.0.0/24"
+      MapPublicIpOnLaunch: "false"
+      Tags: 
+        - Key: Name
+          Value: lab1_public_subnet
+
+Outputs:
+  VpcID:
+    Description: "ID of the VPC"
+    Value: !Ref myVPC
+
