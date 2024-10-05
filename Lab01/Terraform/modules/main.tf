@@ -20,3 +20,9 @@ module "route_table" {
   availability_zone = module.vpc.availability_zone.id
 }
 
+module "security_groups" {
+  source = "./security-groups-modules"
+  vpc_id = module.vpc.vpc_id
+}
+
+
