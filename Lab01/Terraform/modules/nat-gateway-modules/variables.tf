@@ -1,6 +1,9 @@
-variable "vpc_id" {
-  description = "value"
+variable "internet_gateway" {
+  description = "Internet Gateway"
   type        = string
-  default     = "10.0.0.0/16"
 }
 
+variable "public_subnet_id" {
+  description = "Public Sunet ID"
+  type        = string
+}

@@ -11,7 +11,10 @@ module "vpc" {
 
 module "nat_gateway" {
   source = "./nat-gateway-modules"
-  vpc_id = module.vpc.vpc_id
+
+  internet_gateway = module.vpc.vpc_id
+  public_subnet_id = module.vpc.public_subnet_id
+
 }
 
 module "route_table" {
