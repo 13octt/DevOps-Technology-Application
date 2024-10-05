@@ -1,0 +1,5 @@
+Parameters:
+  VpcCIDR:
+    Description: CIDR VPC
+    Type: String
+    Default: 10.192.0.0/16
