@@ -14,12 +14,13 @@ module "nat_gateway" {
 
   internet_gateway = module.vpc.vpc_id
   public_subnet_id = module.vpc.public_subnet_id
-
 }
 
 module "route_table" {
-  source              = "./route-table-modules"
+  source = "./route-table-modules"
+
   vpc_id              = module.vpc.vpc_id
+  internet_gateway    = module.vpc.vpc_id
   nat_gateway_id      = module.nat_gateway
   private_subnet_cidr = module.vpc.private_subnet_id
   public_subnet_cidr  = module.vpc.public_subnet_id

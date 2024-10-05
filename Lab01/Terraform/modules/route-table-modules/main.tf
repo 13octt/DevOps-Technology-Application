@@ -1,11 +1,3 @@
-// AWS Internet gateway
-resource "aws_internet_gateway" "igw" {
-  vpc_id = var.vpc_id
-
-  tags = {
-    Name = "lab1_internet_gateway"
-  }
-}
 
 # AWS Public Route Table
 resource "aws_route_table" "rtb_public" {
@@ -13,7 +5,7 @@ resource "aws_route_table" "rtb_public" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
+    gateway_id = var.internet_gateway
   }
 
   tags = {
