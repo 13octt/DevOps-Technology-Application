@@ -41,3 +41,106 @@ resource "aws_subnet" "private_subnet" {
     Name = "lab1_private_subnet"
   }
 }
+
+resource "aws_eip" "nat" {}
+
+// AWS Nat Gateway
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public_subnet.id
+  depends_on    = [aws_internet_gateway.igw.id]
+}
+
+
+# AWS Public Route Table
+resource "aws_route_table" "rtb_public" {
+  vpc_id = var.vpc_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = "lab1_public_route_table"
+  }
+}
+
+// AWS Private Route table
+resource "aws_route_table" "rtb_private" {
+  vpc_id = var.vpc_id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gw.id
+  }
+
+  tags = {
+    Name = "lab1_private_route_table"
+  }
+}
+
+# Connect Public Subnet with Internet Gateway
+resource "aws_route_table_association" "public-association" {
+  subnet_id      = var.public_subnet.id
+  route_table_id = aws_route_table.rtb_public.id
+}
+
+# Connect Private Subnet with NAT Gateway
+resource "aws_route_table_association" "private-association" {
+  subnet_id      = var.private_subnet.id
+  route_table_id = aws_route_table.rtb_private.id
+}
+
+# AWS Public EC2 Security group
+resource "aws_security_group" "public_ec2_sg" {
+  name   = "public_ec2_sg"
+  description = "Public Security Group for EC2"
+  vpc_id = var.vpc_id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lab1_public_security_group"
+  }
+}
+
+# AWS Private EC2 Security group
+resource "aws_security_group" "private_ec2_sg" {
+  name        = "private_ec2_sg"
+  description = "Private Security Group for EC2"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 22  
+    to_port     = 22  
+    protocol    = "tcp"
+    security_groups = [aws_security_group.public_ec2_sg.id]  
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lab1_private_security_group"
+  }
+}
+
+
+

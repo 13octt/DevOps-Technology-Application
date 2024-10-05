@@ -27,3 +27,4 @@ variable "enable_dns_support" {
   description = "Enable DNS Support"
   type        = bool
 }
+
