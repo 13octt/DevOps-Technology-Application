@@ -1,18 +1,29 @@
 variable "vpc_id" {
-  description = "value"
+  description = "VPC ID"
   type        = string
 }
 
 variable "public_subnet_cidr" {
-  description = "value"
+  description = "Public Subnet CIDR"
   type        = string
 }
 
 variable "private_subnet_cidr" {
-  description = "value"
+  description = "Private Subnet CIDR"
   type        = string
 }
 
 variable "availability_zone" {
-  description = "value"
+  description = "Availabillity zone"
+  type        = string
+}
+
+variable "enable_dns_hostnames" {
+  description = "Enable DNS Hostnames"
+  type        = bool
+}
+
+variable "enable_dns_support" {
+  description = "Enable DNS Support"
+  type        = bool
 }
