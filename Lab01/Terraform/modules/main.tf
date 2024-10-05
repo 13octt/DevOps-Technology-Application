@@ -25,4 +25,12 @@ module "security_groups" {
   vpc_id = module.vpc.vpc_id
 }
 
+module "ec2" {
+  source = "./ec2-modules"
+  ami = ""
+  instance_type = "t2.micro"
+  subnet_id = "subnet id"
+  security_groups = []
+}
+
 
