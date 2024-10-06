@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "us-east-1"
-}
-
 // AWS VPC 
 resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_id
@@ -99,9 +95,9 @@ resource "aws_route_table_association" "private-association" {
 
 # AWS Public EC2 Security group
 resource "aws_security_group" "public_ec2_sg" {
-  name   = "public_ec2_sg"
+  name        = "public_ec2_sg"
   description = "Public Security Group for EC2"
-  vpc_id = aws_vpc.vpc.id
+  vpc_id      = aws_vpc.vpc.id
 
   ingress {
     from_port   = 22
@@ -129,10 +125,10 @@ resource "aws_security_group" "private_ec2_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    from_port   = 22  
-    to_port     = 22  
-    protocol    = "tcp"
-    security_groups = [aws_security_group.public_ec2_sg.id]  
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.public_ec2_sg.id]
   }
 
   egress {
