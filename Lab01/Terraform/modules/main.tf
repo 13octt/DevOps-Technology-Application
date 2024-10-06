@@ -12,8 +12,8 @@ module "vpc" {
 }
 
 module "ec2" {
-  source = "./ec2-modules"
-
+  source                  = "./ec2-modules"
+  key_name                = "customkey"
   ami                     = "ami-005fc0f236362e99f"
   instance_type           = "t2.micro"
   public_subnet_id        = module.vpc.public_subnet_id

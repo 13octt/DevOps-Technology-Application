@@ -27,3 +27,8 @@ variable "private_security_groups" {
   description = "Private Security Group"
   type        = string
 }
+
+variable "key_name" {
+  description = "Key pairs"
+  type        = string
+}
