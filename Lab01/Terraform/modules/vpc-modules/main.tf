@@ -1,8 +1,12 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
 // AWS VPC 
 resource "aws_vpc" "vpc" {
   cidr_block           = var.vpc_id
-  enable_dns_hostnames = var.enable_dns_hostnames
-  enable_dns_support   = var.enable_dns_support
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 
   tags = {
     Name = "lab1_vpc"
@@ -42,19 +46,20 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-resource "aws_eip" "nat" {}
+resource "aws_eip" "nat" {
+  domain = "vpc"
+}
 
 // AWS Nat Gateway
 resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public_subnet.id
-  depends_on    = [aws_internet_gateway.igw.id]
+  depends_on    = [aws_internet_gateway.igw]
 }
-
 
 # AWS Public Route Table
 resource "aws_route_table" "rtb_public" {
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -68,7 +73,7 @@ resource "aws_route_table" "rtb_public" {
 
 // AWS Private Route table
 resource "aws_route_table" "rtb_private" {
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
@@ -82,13 +87,13 @@ resource "aws_route_table" "rtb_private" {
 
 # Connect Public Subnet with Internet Gateway
 resource "aws_route_table_association" "public-association" {
-  subnet_id      = var.public_subnet.id
+  subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.rtb_public.id
 }
 
 # Connect Private Subnet with NAT Gateway
 resource "aws_route_table_association" "private-association" {
-  subnet_id      = var.private_subnet.id
+  subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.rtb_private.id
 }
 
@@ -96,7 +101,7 @@ resource "aws_route_table_association" "private-association" {
 resource "aws_security_group" "public_ec2_sg" {
   name   = "public_ec2_sg"
   description = "Public Security Group for EC2"
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
   ingress {
     from_port   = 22
@@ -121,7 +126,7 @@ resource "aws_security_group" "public_ec2_sg" {
 resource "aws_security_group" "private_ec2_sg" {
   name        = "private_ec2_sg"
   description = "Private Security Group for EC2"
-  vpc_id      = var.vpc_id
+  vpc_id      = aws_vpc.vpc.id
 
   ingress {
     from_port   = 22  

@@ -17,14 +17,3 @@ variable "availability_zone" {
   description = "Availabillity zone"
   type        = string
 }
-
-variable "enable_dns_hostnames" {
-  description = "Enable DNS Hostnames"
-  type        = bool
-}
-
-variable "enable_dns_support" {
-  description = "Enable DNS Support"
-  type        = bool
-}
-
