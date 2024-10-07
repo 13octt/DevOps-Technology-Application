@@ -11,9 +11,14 @@ module "vpc" {
   availability_zone   = "us-east-1a"
 }
 
+resource "aws_key_pair" "my_key_pair" {
+  key_name      = "custom-key"
+  public_key    = file("~/.ssh/id_rsa.pub")
+}
+
 module "ec2" {
   source                  = "./ec2-modules"
-  key_name                = "customkey"
+  key_name                = "custom-key"
   ami                     = "ami-005fc0f236362e99f"
   instance_type           = "t2.micro"
   public_subnet_id        = module.vpc.public_subnet_id
