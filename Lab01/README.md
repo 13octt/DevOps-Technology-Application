@@ -5,7 +5,7 @@
 - Clone mã nguồn từ GitHub bằng lệnh sau:
 
 ```bash
-github.com
+https://github.com/13octt/DevOps-Technology-Application.git
 ```
 
 ## Terraform
@@ -23,7 +23,7 @@ aws configure
 cd Lab01/Terraform/modules/
 ```
 
-#### Bước 3: Khởi tạo Terraform
+#### Bước 3: Khởi tạo và chạy Terraform
     
 ```bash
 terraform init
@@ -32,7 +32,7 @@ terraform apply
 ```
 - File main.tf trong thư mục modules sẽ gọi tới module VPC và EC2 để tạo các resources và tự động triển khai các hạ tầng tương ứng.
 
-> Lưu ý: Nếu muốn SSH tới các Instance thì phải thay public key trong resource key_pair
+> Lưu ý: Nếu muốn SSH tới các Instance thì phải thay đường dẫn public key trong resource key_pair
 
 ## CloudFormation
 
