@@ -8,24 +8,19 @@
 
 ### Terraform
     
-    Bước 2: Kết nối với AWS:
-    ```bash
-    aws configure
+#### Bước 1: Kết nối với AWS:
+       
+        ```bash
+        aws configure
     
-    Bước 1: Di chuyển đến thư mục modules của Terraform bằng lệnh
+#### Bước 2: Di chuyển đến thư mục modules của Terraform bằng lệnh
+    
     ```bash
     cd Lab01/Terraform/modules/
 
-    Bước 2: Khởi tạo Terraform bằng lệnh:
+#### Bước 3: Khởi tạo Terraform
+    
     ```bash
     terraform init
-
-    Bước 2: Khởi tạo Terraform bằng lệnh:
-    ```bash
-    terraform plan
-
-    Bước 2: Khởi tạo Terraform bằng lệnh:
-    ```bash
+    terraform plan 
     terraform apply
-
-
