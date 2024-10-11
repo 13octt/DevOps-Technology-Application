@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  VpcCIDR:
+    Description: CIDR VPC
+    Type: String
+    Default: "10.0.0.0/16"
+
+  PublicSubnetCIDR:
+    Description: Public Subnet CIDR
+    Type: String
+    Default: "10.0.1.0/24"
+
+  PrivateSubnetCIDR:
+    Description: Private Subnet CIDR
+    Type: String
+    Default: "10.0.2.0/24"
+
+Resources:
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: lab1_vpc
+
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: lab1_internet_gateway
+
+  myVpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref myVPC
+      InternetGatewayId: !Ref myInternetGateway
+
+  myPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref PublicSubnetCIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: lab1_public_subnet
+
+  myPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref PrivateSubnetCIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: lab1_private_subnet
+
+  myPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: lab1_public_route_table
+
+  myPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: lab1_private_route_table
+
+  myPublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref myPublicRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref myInternetGateway
+
+  myEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  myNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt myEIP.AllocationId
+      SubnetId: !Ref myPublicSubnet
+
+  myPrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref myPrivateRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref myNatGateway
+
+  myPublicRouteAssociation:
+    Type: AWS::EC2::RouteTableAssociation
+    Properties:
+      SubnetId: !Ref myPublicSubnet
+      RouteTableId: !Ref myPublicRouteTable
+
+  myPrivateRouteAssociation:
+    Type: AWS::EC2::RouteTableAssociation
+    Properties:
+      SubnetId: !Ref myPrivateSubnet
+      RouteTableId: !Ref myPrivateRouteTable
+
+Outputs:
+  VpcId:
+    Description: "ID of the VPC"
+    Value: !Ref myVPC
+  PublicSubnetId:
+    Description: "ID of the Public Subnet"
+    Value: !Ref myPublicSubnet
+  PrivateSubnetId:
+    Description: "ID of the Private Subnet"
+    Value: !Ref myPrivateSubnet

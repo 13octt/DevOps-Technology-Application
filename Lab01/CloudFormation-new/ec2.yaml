@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  KeyName:
+    Description: SSH Key Name
+    Type: String
+
+  PublicSubnetId:
+    Description: Public Subnet ID
+    Type: String
+
+  PrivateSubnetId:
+    Description: Private Subnet ID
+    Type: String
+
+Resources:
+  PublicSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access for public instances
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "0.0.0.0/0"
+
+  PrivateSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access for private instances through Bastion
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "10.0.0.0/16"
+
+  PublicInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: !Ref KeyName
+      ImageId: ami-005fc0f236362e99f
+      SubnetId: !Ref PublicSubnetId
+      SecurityGroupIds:
+        - !Ref PublicSecurityGroup
+
+  PrivateInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: !Ref KeyName
+      ImageId: ami-005fc0f236362e99f
+      SubnetId: !Ref PrivateSubnetId
+      SecurityGroupIds:
+        - !Ref PrivateSecurityGroup
+
+Outputs:
+  PublicInstanceId:
+    Description: "ID of the Public EC2 Instance"
+    Value: !Ref PublicInstance
+
+  PrivateInstanceId:
+    Description: "ID of the Private EC2 Instance"
+    Value: !Ref PrivateInstance
