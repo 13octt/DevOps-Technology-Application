@@ -66,4 +66,3 @@ Outputs:
   VpcID:
     Description: "ID of the VPC"
     Value: !Ref myVPC
-
