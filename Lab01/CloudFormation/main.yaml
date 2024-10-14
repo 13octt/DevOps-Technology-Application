@@ -3,9 +3,6 @@ Parameters:
   KeyName:
     Type: String
     Default: "ec2keypair"
-  VpcId:
-    Type: String
-    Default: "vpc-00ce0ce06d32eacaf" # Cập nhật giá trị VPC ID
   PublicSubnetId:
     Type: String
     Default: "subnet-022bcf54c34f5941c" # Cập nhật giá trị Public Subnet ID
@@ -19,7 +16,6 @@ Resources:
     Properties:
       TemplateURL: "https://cloudformation-templates-lab1.s3.amazonaws.com/vpc.yaml"
       Parameters:
-        VpcId: !Ref VpcId
         PublicSubnetCIDR: "10.0.1.0/24"
         PrivateSubnetCIDR: "10.0.2.0/24"
   
@@ -29,6 +25,6 @@ Resources:
       TemplateURL: "https://cloudformation-templates-lab1.s3.amazonaws.com/ec2.yaml"
       Parameters:
         KeyName: !Ref KeyName
-        VpcId: !Ref VpcId
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
         PublicSubnetId: !Ref PublicSubnetId
         PrivateSubnetId: !Ref PrivateSubnetId
