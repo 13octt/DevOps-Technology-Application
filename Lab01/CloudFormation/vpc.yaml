@@ -101,13 +101,13 @@ Resources:
       NatGatewayId: !Ref myNatGateway
 
   myPublicRouteAssociation:
-    Type: AWS::EC2::RouteTableAssociation
+    Type: AWS::EC2::SubnetRouteTableAssociation # Chỉnh sửa ở đây
     Properties:
       SubnetId: !Ref myPublicSubnet
       RouteTableId: !Ref myPublicRouteTable
 
   myPrivateRouteAssociation:
-    Type: AWS::EC2::RouteTableAssociation
+    Type: AWS::EC2::SubnetRouteTableAssociation # Chỉnh sửa ở đây
     Properties:
       SubnetId: !Ref myPrivateSubnet
       RouteTableId: !Ref myPrivateRouteTable
