@@ -3,9 +3,9 @@ Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "./cloudformation/vpc.yaml"
+      TemplateURL: "https://cloudformation-templates-lab1.s3.amazonaws.com/vpc.yaml"
   
   EC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "./cloudformation/ec2.yaml"
+      TemplateURL: "https://cloudformation-templates-lab1.s3.amazonaws.com/ec2.yaml"
