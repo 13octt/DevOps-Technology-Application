@@ -12,6 +12,10 @@ Parameters:
     Description: Private Subnet ID
     Type: String
 
+  VpcId:
+    Description: VPC ID
+    Type: String
+
 Resources:
   PublicSecurityGroup:
     Type: AWS::EC2::SecurityGroup
