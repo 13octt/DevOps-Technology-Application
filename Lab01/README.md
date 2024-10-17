@@ -39,7 +39,7 @@ terraform apply
 ####  Bước 1: Di chuyển đến thư mục modules của CloudFromation bằng lệnh
 
 ```bash
-cd Lab01/Cloudformation/modules
+cd Lab01/Cloudformation/
 ```
 
 #### Bước 2: Tạo 1 Bucket trên AWS S3
