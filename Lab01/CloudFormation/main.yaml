@@ -1,30 +1,53 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Main Template
+
 Parameters:
-  KeyName:
+  VpcCIDR:
     Type: String
-    Default: "ec2keypair"
-  PublicSubnetId:
+    Default: "192.168.0.0/16"
+  PublicSubnetCIDR:
     Type: String
-    Default: "subnet-022bcf54c34f5941c" # Cập nhật giá trị Public Subnet ID
-  PrivateSubnetId:
+    Default: "192.168.1.0/24"
+  PrivateSubnetCIDR:
     Type: String
-    Default: "subnet-0d94d1dfda4f3193c" # Cập nhật giá trị Private Subnet ID
+    Default: "192.168.2.0/24"
+  AvailabilityZone:
+    Type: String
+    Default: "us-east-1a"
+  BucketName:
+    Type: String
+    Default: "lab1s3bucketnhom14"
 
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://cloudformation-templates-lab1.s3.amazonaws.com/vpc.yaml"
+      TemplateURL: !Sub "https://${BucketName}.s3.amazonaws.com/vpc.yaml"
       Parameters:
-        PublicSubnetCIDR: "10.0.1.0/24"
-        PrivateSubnetCIDR: "10.0.2.0/24"
-  
+        VpcCIDR: !Ref VpcCIDR
+        PublicSubnetCIDR: !Ref PublicSubnetCIDR
+        PrivateSubnetCIDR: !Ref PrivateSubnetCIDR
+        AvailabilityZone: !Ref AvailabilityZone
+
   EC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://cloudformation-templates-lab1.s3.amazonaws.com/ec2.yaml"
+      TemplateURL: !Sub "https://${BucketName}.s3.amazonaws.com/ec2.yaml"
       Parameters:
-        KeyName: !Ref KeyName
-        VpcId: !GetAtt VPCStack.Outputs.VpcId
-        PublicSubnetId: !Ref PublicSubnetId
-        PrivateSubnetId: !Ref PrivateSubnetId
+        VPCId: !GetAtt VPCStack.Outputs.VPCId
+        PublicSubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
+        PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        PublicEC2SecurityGroup: !GetAtt VPCStack.Outputs.PublicSgId
+        PrivateEC2SecurityGroup: !GetAtt VPCStack.Outputs.PrivateSgId
+
+Outputs:
+  VPCId:
+    Value: !GetAtt VPCStack.Outputs.VPCId
+  PublicSubnetId:
+    Value: !GetAtt VPCStack.Outputs.PublicSubnetId
+  PrivateSubnetId:
+    Value: !GetAtt VPCStack.Outputs.PrivateSubnetId
+  PublicEC2InstanceId:
+    Value: !GetAtt EC2Stack.Outputs.PublicEC2InstanceId
+  PrivateEC2InstanceId:
+    Value: !GetAtt EC2Stack.Outputs.PrivateEC2InstanceId

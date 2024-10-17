@@ -1,69 +1,70 @@
-AWSTemplateFormatVersion: "2010-09-09"
 Parameters:
-  KeyName:
-    Description: SSH Key Name
+  VPCId:
     Type: String
-
   PublicSubnetId:
-    Description: Public Subnet ID
     Type: String
-
   PrivateSubnetId:
-    Description: Private Subnet ID
     Type: String
-
-  VpcId:
-    Description: VPC ID
+  PublicEC2SecurityGroup:
     Type: String
+  PrivateEC2SecurityGroup:
+    Type: String
+  INSTANCETYPE:
+    Type: String
+    Default: "t2.micro"
+  KEYNAME:
+    Type: String
+    Default: "custom-key"
+  AMI:
+    Type: String
+    Default: "ami-0866a3c8686eaeeba"
+  Environment:
+    Type: String
+    Default: "Lab1_Nhom14"
 
 Resources:
-  PublicSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+  CustomKeyPair:
+    Type: 'AWS::EC2::KeyPair'
     Properties:
-      GroupDescription: Enable SSH access for public instances
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: "0.0.0.0/0"
+      KeyName: MyKeyPair
+      PublicKeyMaterial: |
+        ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX0f7ol8ixX7fDMDODwD
+        0WdEprkrK5qbG9cQ/MMC5X4zOcw00n9hWue5BhExhOS7EpXCIhTIsPXdav
+        IUTtaXiY4g9EI76F96U0LIwVgdvpJ+44arqmDCoa3A3qgpWYBQhTkBsdlM
+        tg3rLZ5familcHxGS47hEf7hvIH1OwSToJUUb7I2PHQbwdD8Q+Me8/X/Ij
+        d4/ynlbwYppHTweOgtygWEfROh4YWXqPAU43Lk7sEety9Kwxs1CorVbygL
+        HB6bGb75rGoUqLgmXOfTRBT9bCFIlU/lPlXQXJr70CSixqGsULpIuanRFg
+        nVvwb7P2wmczgtcI5lLGVObNUQKmTpcD Bao Duy@DESKTOP-QE2KJE6
 
-  PrivateSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Enable SSH access for private instances through Bastion
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: "10.0.0.0/16"
 
-  PublicInstance:
+  PublicEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t2.micro
-      KeyName: !Ref KeyName
-      ImageId: ami-005fc0f236362e99f
+      InstanceType: !Ref INSTANCETYPE
+      KeyName: !Ref CustomKeyPair
+      ImageId: !Ref AMI
       SubnetId: !Ref PublicSubnetId
       SecurityGroupIds:
-        - !Ref PublicSecurityGroup
+        - !Ref PublicEC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_PublicEC2Instance"
 
-  PrivateInstance:
+  PrivateEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t2.micro
-      KeyName: !Ref KeyName
-      ImageId: ami-005fc0f236362e99f
+      InstanceType: !Ref INSTANCETYPE
+      KeyName: !Ref CustomKeyPair
+      ImageId: !Ref AMI
       SubnetId: !Ref PrivateSubnetId
       SecurityGroupIds:
-        - !Ref PrivateSecurityGroup
+        - !Ref PrivateEC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_PrivateEC2Instance"
 
 Outputs:
-  PublicInstanceId:
-    Description: "ID of the Public EC2 Instance"
-    Value: !Ref PublicInstance
-
-  PrivateInstanceId:
-    Description: "ID of the Private EC2 Instance"
-    Value: !Ref PrivateInstance
+  PublicEC2InstanceId:
+    Value: !Ref PublicEC2Instance
+  PrivateEC2InstanceId:
+    Value: !Ref PrivateEC2Instance

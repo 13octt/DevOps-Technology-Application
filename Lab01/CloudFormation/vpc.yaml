@@ -1,22 +1,25 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC Module
+
 Parameters:
   VpcCIDR:
-    Description: CIDR VPC
     Type: String
-    Default: "10.0.0.0/16"
-
   PublicSubnetCIDR:
-    Description: Public Subnet CIDR
     Type: String
-    Default: "10.0.1.0/24"
-
   PrivateSubnetCIDR:
-    Description: Private Subnet CIDR
     Type: String
-    Default: "10.0.2.0/24"
+  AvailabilityZone:
+    Type: String
+  PublicIP:
+    Type: String 
+    Default: "0.0.0.0/0"
+  Environment:
+    Type: String
+    Default: "Lab1_Nhom14"
+  
 
 Resources:
-  myVPC:
+  MyVPC: 
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VpcCIDR
@@ -24,101 +27,138 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: lab1_vpc
+          Value: !Sub "${Environment}_VPC"
 
-  myInternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: lab1_internet_gateway
-
-  myVpcGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref myVPC
-      InternetGatewayId: !Ref myInternetGateway
-
-  myPublicSubnet:
+  PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: !Ref PublicSubnetCIDR
+      AvailabilityZone: !Ref AvailabilityZone
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: lab1_public_subnet
+          Value: !Sub "${Environment}_PublicSubnet"
 
-  myPrivateSubnet:
+  PrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: !Ref PrivateSubnetCIDR
-      MapPublicIpOnLaunch: false
+      AvailabilityZone: !Ref AvailabilityZone
       Tags:
         - Key: Name
-          Value: lab1_private_subnet
+          Value: !Sub "${Environment}_PrivateSubnet"
 
-  myPublicRouteTable:
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties: 
+      Tags:
+        - Key: Name
+          Value: ${Environment}_InternetGateway
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       Tags:
         - Key: Name
-          Value: lab1_public_route_table
+          Value: "${Environment}_PublicRouteTable"
 
-  myPrivateRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref myVPC
-      Tags:
-        - Key: Name
-          Value: lab1_private_route_table
-
-  myPublicRoute:
+  PublicRoute:
     Type: AWS::EC2::Route
+    DependsOn: AttachGateway
     Properties:
-      RouteTableId: !Ref myPublicRouteTable
+      RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: "0.0.0.0/0"
-      GatewayId: !Ref myInternetGateway
+      GatewayId: !Ref InternetGateway
 
-  myEIP:
-    Type: AWS::EC2::EIP
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      Domain: vpc
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
 
-  myNatGateway:
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_PrivateRouteTable"
+
+  NatEIP:
+    Type: AWS::EC2::EIP
+    Properties: 
+      Tags:
+        - Key: Name
+          Value: custom_NatEIP
+
+  NatGateway:
     Type: AWS::EC2::NatGateway
     Properties:
-      AllocationId: !GetAtt myEIP.AllocationId
-      SubnetId: !Ref myPublicSubnet
+      AllocationId: !GetAtt NatEIP.AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_NatGateway"
 
-  myPrivateRoute:
+  PrivateRoute:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref myPrivateRouteTable
+      RouteTableId: !Ref PrivateRouteTable
       DestinationCidrBlock: "0.0.0.0/0"
-      NatGatewayId: !Ref myNatGateway
+      NatGatewayId: !Ref NatGateway
 
-  myPublicRouteAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation # Chỉnh sửa ở đây
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref myPublicSubnet
-      RouteTableId: !Ref myPublicRouteTable
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
 
-  myPrivateRouteAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation # Chỉnh sửa ở đây
+  PublicEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      SubnetId: !Ref myPrivateSubnet
-      RouteTableId: !Ref myPrivateRouteTable
+      GroupDescription: Allow SSH access from specific IP
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref PublicIP
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_PublicEC2SecurityGroup"
+
+  PrivateEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH access from Public EC2 instance
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref PublicEC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_PrivateEC2SecurityGroup"
 
 Outputs:
-  VpcId:
-    Description: "ID of the VPC"
-    Value: !Ref myVPC
+  VPCId:
+    Value: !Ref MyVPC
   PublicSubnetId:
-    Description: "ID of the Public Subnet"
-    Value: !Ref myPublicSubnet
+    Value: !Ref PublicSubnet
   PrivateSubnetId:
-    Description: "ID of the Private Subnet"
-    Value: !Ref myPrivateSubnet
+    Value: !Ref PrivateSubnet
+  PublicSgId:
+    Value: !Ref PublicEC2SecurityGroup
+  PrivateSgId:
+    Value: !Ref PrivateEC2SecurityGroup
+  
