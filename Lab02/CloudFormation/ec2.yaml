@@ -1,0 +1,70 @@
+Parameters:
+  VPCId:
+    Type: String
+  PublicSubnetId:
+    Type: String
+  PrivateSubnetId:
+    Type: String
+  PublicEC2SecurityGroup:
+    Type: String
+  PrivateEC2SecurityGroup:
+    Type: String
+  INSTANCETYPE:
+    Type: String
+    Default: "t2.micro"
+  KEYNAME:
+    Type: String
+    Default: "custom-key"
+  AMI:
+    Type: String
+    Default: "ami-0866a3c8686eaeeba"
+  Environment:
+    Type: String
+    Default: "Lab1_Nhom14"
+
+Resources:
+  CustomKeyPair:
+    Type: 'AWS::EC2::KeyPair'
+    Properties:
+      KeyName: MyKeyPair
+      PublicKeyMaterial: |
+        ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCX0f7ol8ixX7fDMDODwD
+        0WdEprkrK5qbG9cQ/MMC5X4zOcw00n9hWue5BhExhOS7EpXCIhTIsPXdav
+        IUTtaXiY4g9EI76F96U0LIwVgdvpJ+44arqmDCoa3A3qgpWYBQhTkBsdlM
+        tg3rLZ5familcHxGS47hEf7hvIH1OwSToJUUb7I2PHQbwdD8Q+Me8/X/Ij
+        d4/ynlbwYppHTweOgtygWEfROh4YWXqPAU43Lk7sEety9Kwxs1CorVbygL
+        HB6bGb75rGoUqLgmXOfTRBT9bCFIlU/lPlXQXJr70CSixqGsULpIuanRFg
+        nVvwb7P2wmczgtcI5lLGVObNUQKmTpcD Bao Duy@DESKTOP-QE2KJE6
+
+
+  PublicEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref INSTANCETYPE
+      KeyName: !Ref CustomKeyPair
+      ImageId: !Ref AMI
+      SubnetId: !Ref PublicSubnetId
+      SecurityGroupIds:
+        - !Ref PublicEC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_PublicEC2Instance"
+
+  PrivateEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref INSTANCETYPE
+      KeyName: !Ref CustomKeyPair
+      ImageId: !Ref AMI
+      SubnetId: !Ref PrivateSubnetId
+      SecurityGroupIds:
+        - !Ref PrivateEC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}_PrivateEC2Instance"
+
+Outputs:
+  PublicEC2InstanceId:
+    Value: !Ref PublicEC2Instance
+  PrivateEC2InstanceId:
+    Value: !Ref PrivateEC2Instance
