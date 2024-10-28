@@ -15,7 +15,7 @@ Parameters:
     Default: "0.0.0.0/0"
   Environment:
     Type: String
-    Default: "Lab1_Nhom14"
+    Default: "lab1_nhom14"
   
 
 Resources:
@@ -27,7 +27,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_VPC"
+          Value: !Sub "${Environment}-VPC"
 
   PublicSubnet:
     Type: AWS::EC2::Subnet
@@ -38,7 +38,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_PublicSubnet"
+          Value: !Sub "${Environment}-PublicSubnet"
 
   PrivateSubnet:
     Type: AWS::EC2::Subnet
@@ -48,7 +48,7 @@ Resources:
       AvailabilityZone: !Ref AvailabilityZone
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_PrivateSubnet"
+          Value: !Sub "${Environment}-PrivateSubnet"
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -69,7 +69,7 @@ Resources:
       VpcId: !Ref MyVPC
       Tags:
         - Key: Name
-          Value: "${Environment}_PublicRouteTable"
+          Value: !Sub "${Environment}-PublicRouteTable"
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -91,7 +91,7 @@ Resources:
       VpcId: !Ref MyVPC
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_PrivateRouteTable"
+          Value: !Sub "${Environment}-PrivateRouteTable"
 
   NatEIP:
     Type: AWS::EC2::EIP
@@ -107,7 +107,7 @@ Resources:
       SubnetId: !Ref PublicSubnet
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_NatGateway"
+          Value: !Sub "${Environment}-NatGateway"
 
   PrivateRoute:
     Type: AWS::EC2::Route
@@ -134,7 +134,7 @@ Resources:
           CidrIp: !Ref PublicIP
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_PublicEC2SecurityGroup"
+          Value: !Sub "${Environment}-PublicEC2SecurityGroup"
 
   PrivateEC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -148,7 +148,7 @@ Resources:
           SourceSecurityGroupId: !Ref PublicEC2SecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_PrivateEC2SecurityGroup"
+          Value: !Sub "${Environment}-PrivateEC2SecurityGroup"
 
 Outputs:
   VPCId:

@@ -16,7 +16,7 @@ Parameters:
     Default: "us-east-1a"
   BucketName:
     Type: String
-    Default: "lab1s3bucketnhom14"
+    Default: "nhom14lab02s3bucket"
 
 Resources:
   VPCStack:
@@ -34,7 +34,6 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://${BucketName}.s3.amazonaws.com/ec2.yaml"
       Parameters:
-        VPCId: !GetAtt VPCStack.Outputs.VPCId
         PublicSubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
         PublicEC2SecurityGroup: !GetAtt VPCStack.Outputs.PublicSgId

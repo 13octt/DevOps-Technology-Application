@@ -1,6 +1,4 @@
 Parameters:
-  VPCId:
-    Type: String
   PublicSubnetId:
     Type: String
   PrivateSubnetId:
@@ -12,15 +10,12 @@ Parameters:
   INSTANCETYPE:
     Type: String
     Default: "t2.micro"
-  KEYNAME:
-    Type: String
-    Default: "custom-key"
   AMI:
-    Type: String
+    Type: AWS::EC2::Image::Id
     Default: "ami-0866a3c8686eaeeba"
   Environment:
     Type: String
-    Default: "Lab1_Nhom14"
+    Default: "lab1_nhom14"
 
 Resources:
   CustomKeyPair:
@@ -36,7 +31,6 @@ Resources:
         HB6bGb75rGoUqLgmXOfTRBT9bCFIlU/lPlXQXJr70CSixqGsULpIuanRFg
         nVvwb7P2wmczgtcI5lLGVObNUQKmTpcD Bao Duy@DESKTOP-QE2KJE6
 
-
   PublicEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -48,7 +42,7 @@ Resources:
         - !Ref PublicEC2SecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_PublicEC2Instance"
+          Value: !Sub "${Environment}-PublicEC2Instance"
 
   PrivateEC2Instance:
     Type: AWS::EC2::Instance
@@ -61,7 +55,7 @@ Resources:
         - !Ref PrivateEC2SecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}_PrivateEC2Instance"
+          Value: !Sub "${Environment}-PrivateEC2Instance"
 
 Outputs:
   PublicEC2InstanceId:
