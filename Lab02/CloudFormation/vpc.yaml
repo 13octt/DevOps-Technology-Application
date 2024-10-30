@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: VPC Module
 
 Parameters:
@@ -11,15 +11,14 @@ Parameters:
   AvailabilityZone:
     Type: String
   PublicIP:
-    Type: String 
+    Type: String
     Default: "0.0.0.0/0"
   Environment:
     Type: String
-    Default: "lab1_nhom14"
-  
+    Default: "Lab1_Nhom14"
 
 Resources:
-  MyVPC: 
+  MyVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VpcCIDR
@@ -27,7 +26,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-VPC"
+          Value: !Sub "${Environment}_VPC"
 
   PublicSubnet:
     Type: AWS::EC2::Subnet
@@ -38,7 +37,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-PublicSubnet"
+          Value: !Sub "${Environment}_PublicSubnet"
 
   PrivateSubnet:
     Type: AWS::EC2::Subnet
@@ -48,14 +47,14 @@ Resources:
       AvailabilityZone: !Ref AvailabilityZone
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-PrivateSubnet"
+          Value: !Sub "${Environment}_PrivateSubnet"
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
-    Properties: 
+    Properties:
       Tags:
         - Key: Name
-          Value: ${Environment}_InternetGateway
+          Value: !Sub "${Environment}_InternetGateway"
 
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -69,7 +68,7 @@ Resources:
       VpcId: !Ref MyVPC
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-PublicRouteTable"
+          Value: !Sub "${Environment}_PublicRouteTable"
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -91,11 +90,11 @@ Resources:
       VpcId: !Ref MyVPC
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-PrivateRouteTable"
+          Value: !Sub "${Environment}_PrivateRouteTable"
 
   NatEIP:
     Type: AWS::EC2::EIP
-    Properties: 
+    Properties:
       Tags:
         - Key: Name
           Value: custom_NatEIP
@@ -107,7 +106,7 @@ Resources:
       SubnetId: !Ref PublicSubnet
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-NatGateway"
+          Value: !Sub "${Environment}_NatGateway"
 
   PrivateRoute:
     Type: AWS::EC2::Route
@@ -134,7 +133,7 @@ Resources:
           CidrIp: !Ref PublicIP
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-PublicEC2SecurityGroup"
+          Value: !Sub "${Environment}_PublicEC2SecurityGroup"
 
   PrivateEC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -148,7 +147,7 @@ Resources:
           SourceSecurityGroupId: !Ref PublicEC2SecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub "${Environment}-PrivateEC2SecurityGroup"
+          Value: !Sub "${Environment}_PrivateEC2SecurityGroup"
 
 Outputs:
   VPCId:
@@ -161,4 +160,3 @@ Outputs:
     Value: !Ref PublicEC2SecurityGroup
   PrivateSgId:
     Value: !Ref PrivateEC2SecurityGroup
-  
