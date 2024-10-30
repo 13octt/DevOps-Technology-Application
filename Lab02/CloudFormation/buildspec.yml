@@ -15,4 +15,4 @@ phases:
   build:
     commands:
       - echo "Running Taskcat..."
-      - taskcat test run -c taskcat.yml
+      - taskcat test run

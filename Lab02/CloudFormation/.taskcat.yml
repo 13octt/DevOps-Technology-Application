@@ -2,8 +2,8 @@ project:
   name: nhom14
   regions:
     - us-east-1
-  s3_bucket: nhom14lab02s3bucket 
-  
+  s3_bucket: nhom14lab02s3bucket
+
 tests:
   my-test:
-    template: main.yaml
+    template: ./main.yaml
