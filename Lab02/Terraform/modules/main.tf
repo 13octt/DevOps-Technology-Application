@@ -11,10 +11,10 @@ module "vpc" {
   availability_zone   = "us-east-1a"
 }
 
-resource "aws_key_pair" "my_key_pair" {
-  key_name      = "custom-key"
-  public_key    = file("~/.ssh/id_rsa.pub")
-}
+# resource "aws_key_pair" "my_key_pair" {
+#   key_name      = "custom-key"
+#   public_key    = file("~/.ssh/id_rsa.pub")
+# }
 
 module "ec2" {
   source                  = "./ec2-modules"
