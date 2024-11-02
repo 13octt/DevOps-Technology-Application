@@ -15,7 +15,7 @@ Parameters:
     Default: "ami-0866a3c8686eaeeba"
   Environment:
     Type: String
-    Default: "Lab1_Nhom14"
+    Default: "nhom14-lab02"
 
 Resources:
   PublicEC2Instance:
