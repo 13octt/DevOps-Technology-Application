@@ -47,8 +47,8 @@ name: 'Terraform Deploy with Github Actions'
 on:
   push:
     branches: [ "lab02/terraform" ]
-  pull_request:
-    branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
 
 permissions:
   contents: read
