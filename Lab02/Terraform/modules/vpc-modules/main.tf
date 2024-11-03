@@ -23,7 +23,7 @@ resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.public_subnet_cidr
   availability_zone       = var.availability_zone
-  map_public_ip_on_launch = "true"
+  map_public_ip_on_launch = "false"
 
   tags = {
     Name = "${var.env}-public_subnet"
@@ -52,6 +52,8 @@ resource "aws_security_group" "default_sg" {
     from_port       = 0
     to_port         = 0
     protocol        = "-1"
+    cidr_blocks = []
+    description = "Inbound Default SG"
   }
 
   egress {
@@ -59,6 +61,7 @@ resource "aws_security_group" "default_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Outbound Default SG"
   }
 
   tags = {
@@ -127,7 +130,9 @@ resource "aws_security_group" "public_ec2_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["192.168.3.1/24"]
+    description = "Inbound Default SG"
+
   }
 
   egress {
@@ -135,6 +140,8 @@ resource "aws_security_group" "public_ec2_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Outbound Default SG"
+
   }
 
   tags = {
@@ -153,6 +160,8 @@ resource "aws_security_group" "private_ec2_sg" {
     to_port         = 22
     protocol        = "tcp"
     security_groups = [aws_security_group.public_ec2_sg.id]
+    description = "Inbound Default SG"
+
   }
 
   egress {
@@ -160,6 +169,8 @@ resource "aws_security_group" "private_ec2_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+        description = "Outbound Default SG"
+
   }
 
   tags = {
