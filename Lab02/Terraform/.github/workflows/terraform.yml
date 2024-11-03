@@ -2,7 +2,7 @@ name: 'Terraform Deploy with Github Actions'
 
 on:
   push:
-    branches: [ "lab02/terraform" ]
+    branches: [ "dev" ]
   # pull_request:
   #   branches: [ "main" ]
 
