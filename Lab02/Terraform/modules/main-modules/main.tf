@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "./vpc-modules"
+  source = "../vpc-modules"
 
   vpc_id              = "10.0.0.0/16"
   public_subnet_cidr  = "10.0.1.0/24"
@@ -17,7 +17,7 @@ resource "aws_key_pair" "my_key_pair" {
 }
 
 module "ec2" {
-  source                  = "./ec2-modules"
+  source                  = "../ec2-modules"
   key_name                = "custom-key"
   ami                     = "ami-005fc0f236362e99f"
   instance_type           = "t2.micro"
