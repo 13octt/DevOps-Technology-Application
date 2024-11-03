@@ -23,6 +23,8 @@ jobs:
 
     - name: "Run Checkov"
       run: checkov -d .
+      working-directory: Lab02/Terraform/modules/
+
 
     - name: Terraform Init
       run: terraform init
