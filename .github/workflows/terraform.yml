@@ -22,18 +22,6 @@ jobs:
       run: terraform init
       working-directory: Lab02/Terraform/modules/main-modules
 
-    # - name: Terraform Format code MAIN Modules
-    #   run: terraform fmt 
-    #   working-directory: Lab02/Terraform/modules/main-modules
-
-    # - name: Terraform Format code VPC Modules
-    #   run: terraform fmt 
-    #   working-directory: Lab02/Terraform/modules/vpc-modules
-
-    # - name: Terraform Format code EC2 Modules
-    #   run: terraform fmt 
-    #   working-directory: Lab02/Terraform/modules/ec2-modules
-
     - name: Terraform Plan
       env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
