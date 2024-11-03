@@ -6,7 +6,7 @@ resource "aws_instance" "public_ec2_instace" {
   security_groups = [var.public_security_groups]
 
   tags = {
-    Name = "lab1_public_ec2_instance"
+    Name = "${var.env}-public-ec2"
   }
 }
 
@@ -18,6 +18,6 @@ resource "aws_instance" "private_ec2_instace" {
   security_groups = [var.private_security_groups]
 
   tags = {
-    Name = "lab1_private_ec2_instance"
+    Name = "${var.env}-private-ec2"
   }
 }
