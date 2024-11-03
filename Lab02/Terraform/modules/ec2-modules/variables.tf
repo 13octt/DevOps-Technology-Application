@@ -28,11 +28,6 @@ variable "private_security_groups" {
   type        = string
 }
 
-variable "key_name" {
-  description = "Key pairs"
-  type        = string
-}
-
 variable "env" {
   type = string
   default = "nhom14-lab02"
