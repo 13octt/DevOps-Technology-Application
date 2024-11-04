@@ -17,3 +17,9 @@ variable "availability_zone" {
   description = "Availabillity zone"
   type        = string
 }
+
+variable "env" {
+  description = "Environment"
+  type        = string
+  default     = "nhom14-lab02"
+}

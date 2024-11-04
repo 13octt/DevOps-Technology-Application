@@ -5,7 +5,8 @@ resource "aws_vpc" "vpc" {
   enable_dns_support   = true
 
   tags = {
-    Name = "lab1_vpc"
+    Name = "${var.env}-vpc"
+
   }
 }
 
@@ -14,7 +15,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "lab1_internet_gateway"
+    Name = "${var.env}-igw"
   }
 }
 
@@ -26,7 +27,7 @@ resource "aws_subnet" "public_subnet" {
   map_public_ip_on_launch = "true"
 
   tags = {
-    Name = "lab1_public_subnet"
+    Name = "${var.env}-public-subnet"
   }
 }
 
@@ -38,7 +39,7 @@ resource "aws_subnet" "private_subnet" {
   map_public_ip_on_launch = "false"
 
   tags = {
-    Name = "lab1_private_subnet"
+    Name = "${var.env}-private-subnet"
   }
 }
 
@@ -49,9 +50,9 @@ resource "aws_security_group" "default_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
   }
 
   egress {
@@ -62,7 +63,8 @@ resource "aws_security_group" "default_sg" {
   }
 
   tags = {
-    Name = "lab1_default_security_group"
+    Name = "${var.env}-default-sg"
+
   }
 }
 
@@ -87,7 +89,7 @@ resource "aws_route_table" "rtb_public" {
   }
 
   tags = {
-    Name = "lab1_public_route_table"
+    Name = "${var.env}-public-rtb"
   }
 }
 
@@ -101,7 +103,7 @@ resource "aws_route_table" "rtb_private" {
   }
 
   tags = {
-    Name = "lab1_private_route_table"
+    Name = "${var.env}-private-rtb"
   }
 }
 
@@ -138,7 +140,7 @@ resource "aws_security_group" "public_ec2_sg" {
   }
 
   tags = {
-    Name = "lab1_public_security_group"
+    Name = "${var.env}-public-sg"
   }
 }
 
@@ -163,6 +165,6 @@ resource "aws_security_group" "private_ec2_sg" {
   }
 
   tags = {
-    Name = "lab1_private_security_group"
+    Name = "${var.env}-private-sg"
   }
 }
