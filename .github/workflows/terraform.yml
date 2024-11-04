@@ -25,10 +25,13 @@ jobs:
       run: checkov -f main.tf
       working-directory: Lab02/Terraform/modules/main-modules
 
-
     - name: Terraform Init
       run: terraform init
       working-directory: Lab02/Terraform/modules/main-modules
+
+    - name: Terraform Format
+      run: terraform fmt
+      working-directory: Lab02/Terraform/modules/
 
     - name: Terraform Plan
       env:
@@ -38,19 +41,19 @@ jobs:
       working-directory: Lab02/Terraform/modules/main-modules
 
     - name: Terraform Apply
-      if: (github.ref == 'refs/heads/main' && github.event_name == 'pull_request') 
+      if: (github.ref == 'refs/heads/lab02/terra' && github.event_name == 'push') 
       env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform apply -auto-approve -input=false
       working-directory: Lab02/Terraform/modules/main-modules
 
-    # - name: "Terraform Destroy"
-    #   env:
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   run: terraform destroy -auto-approve
-    #   working-directory: Lab02/Terraform/modules/main-modules
+    - name: "Terraform Destroy"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: terraform destroy 
+      working-directory: Lab02/Terraform/modules/main-modules
 
 
 
