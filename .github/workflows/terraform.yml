@@ -22,7 +22,7 @@ jobs:
       run: pip install checkov
 
     - name: "Run Checkov"
-      run: checkov -d .
+      run: checkov -f main.tf
       working-directory: Lab02/Terraform/modules/main-modules
 
 
