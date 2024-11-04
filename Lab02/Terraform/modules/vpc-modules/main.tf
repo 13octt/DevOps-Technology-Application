@@ -42,33 +42,6 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-# AWS Default Security Group for VPC
-resource "aws_security_group" "default_sg" {
-  name        = "default_ec2_sg"
-  description = "Default Security Group for EC2"
-  vpc_id      = aws_vpc.vpc.id
-
-  ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks = []
-    description = "Inbound Default SG"
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Outbound Default SG"
-  }
-
-  tags = {
-    Name = "${var.env}-default-sg"
-  }
-}
-
 resource "aws_eip" "nat" {
   domain = "vpc"
 }

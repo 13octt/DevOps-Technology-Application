@@ -13,11 +13,11 @@ resource "aws_instance" "public_ec2_instace" {
   ebs_optimized    = true
   monitoring = true
 
-  # ebs_block_device {
-  #   device_name = "/dev/sda1"  # Hoặc thiết bị mà bạn đang sử dụng
-  #   volume_size = 8  # Kích thước volume
-  #   encrypted    = true  # Bật mã hóa
-  # }
+  ebs_block_device {
+    device_name = "/dev/sda1"  # Hoặc thiết bị mà bạn đang sử dụng
+    volume_size = 8  # Kích thước volume
+    encrypted    = true  # Bật mã hóa
+  }
 
   tags = {
     Name = "${var.env}-public-ec2"
@@ -39,6 +39,12 @@ resource "aws_instance" "private_ec2_instace" {
   ebs_optimized    = true
   monitoring = true
 
+  ebs_block_device {
+    device_name = "/dev/sda1"  # Hoặc thiết bị mà bạn đang sử dụng
+    volume_size = 8  # Kích thước volume
+    encrypted    = true  # Bật mã hóa
+  }
+  
   tags = {
     Name = "${var.env}-private-ec2"
   }
