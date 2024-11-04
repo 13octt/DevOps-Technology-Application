@@ -168,25 +168,28 @@ resource "aws_security_group" "private_ec2_sg" {
   }
 }
 
-# resource "aws_security_group" "custom_sg" {
-#   name        = "${var.env}-custom-sg"
-#   description = "Custom security group with restricted access"
-#   vpc_id      = aws_vpc.vpc.id
+resource "aws_security_group" "custom_sg" {
+  name        = "${var.env}-custom-sg"
+  description = "Custom security group with restricted access"
+  vpc_id      = aws_vpc.vpc.id
 
-#   # No ingress rules
-#   ingress {
-#     # This block should be empty to restrict all inbound traffic
-#   }
+  # No ingress rules
+  ingress {
+    # This block should be empty to restrict all inbound traffic
+    description = "Outbound Default SG"
 
-#   # No egress rules
-#   egress {
-#     # This block should be empty to restrict all outbound traffic
-#   }
+  }
 
-#   tags = {
-#     Name = "${var.env}-custom-sg"
-#   }
-# }
+  # No egress rules
+  egress {
+    # This block should be empty to restrict all outbound traffic
+    description = "Outbound Default SG"
+  }
+
+  tags = {
+    Name = "${var.env}-custom-sg"
+  }
+}
 
 resource "aws_default_security_group" "default" {
   name        = "${var.env}-default-sg"
