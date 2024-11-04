@@ -15,7 +15,7 @@ resource "aws_flow_log" "log" {
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.vpc.id
 
-    tags = {
+  tags = {
     Name = "${var.env}-log"
   }
 }
@@ -150,7 +150,7 @@ resource "aws_security_group" "private_ec2_sg" {
     to_port         = 22
     protocol        = "tcp"
     security_groups = [aws_security_group.public_ec2_sg.id]
-    description = "Inbound Default SG"
+    description     = "Inbound Default SG"
 
   }
 
@@ -159,7 +159,7 @@ resource "aws_security_group" "private_ec2_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-        description = "Outbound Default SG"
+    description = "Outbound Default SG"
 
   }
 
@@ -168,22 +168,46 @@ resource "aws_security_group" "private_ec2_sg" {
   }
 }
 
-resource "aws_security_group" "custom_sg" {
-  name        = "${var.env}-custom-sg"
-  description = "Custom security group with restricted access"
+# resource "aws_security_group" "custom_sg" {
+#   name        = "${var.env}-custom-sg"
+#   description = "Custom security group with restricted access"
+#   vpc_id      = aws_vpc.vpc.id
+
+#   # No ingress rules
+#   ingress {
+#     # This block should be empty to restrict all inbound traffic
+#   }
+
+#   # No egress rules
+#   egress {
+#     # This block should be empty to restrict all outbound traffic
+#   }
+
+#   tags = {
+#     Name = "${var.env}-custom-sg"
+#   }
+# }
+
+resource "aws_default_security_group" "default" {
+  name        = "${var.env}-default-sg"
+  description = "Default security group with restricted access"
   vpc_id      = aws_vpc.vpc.id
 
-  # No ingress rules
+
   ingress {
-    # This block should be empty to restrict all inbound traffic
+    protocol  = "-1"
+    self      = true
+    from_port = 0
+    to_port   = 0
+    description = "Outbound Default SG"
+
   }
 
-  # No egress rules
   egress {
-    # This block should be empty to restrict all outbound traffic
-  }
-
-  tags = {
-    Name = "${var.env}-custom-sg"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+    protocol    = "-1"
+    description = "Outbound Default SG"
   }
 }
