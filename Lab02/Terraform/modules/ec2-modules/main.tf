@@ -3,7 +3,7 @@ resource "aws_instance" "public_ec2_instace" {
   instance_type   = var.instance_type
   subnet_id       = var.public_subnet_id
   security_groups = [var.public_security_groups]
-
+  iam_instance_profile = "test"
   metadata_options {
     http_endpoint              = "enabled"
     http_tokens                = "required"  # Chỉ cho phép IMDSv2
@@ -29,7 +29,7 @@ resource "aws_instance" "private_ec2_instace" {
   instance_type   = var.instance_type
   subnet_id       = var.private_subnet_id
   security_groups = [var.private_security_groups]
-
+  iam_instance_profile = "test"
   metadata_options {
     http_endpoint              = "enabled"
     http_tokens                = "required"  # Chỉ cho phép IMDSv2

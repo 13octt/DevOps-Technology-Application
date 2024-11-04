@@ -9,6 +9,18 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+resource "aws_flow_log" "log" {
+  iam_role_arn    = "arn"
+  log_destination = "log"
+  traffic_type    = "ALL"
+  vpc_id          = aws_vpc.vpc.id
+
+    tags = {
+    Name = "${var.env}-log"
+  }
+}
+
+
 // AWS Internet gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
@@ -120,6 +132,11 @@ resource "aws_security_group" "public_ec2_sg" {
   tags = {
     Name = "${var.env}-public-sg"
   }
+}
+
+resource "aws_network_interface" "test" {
+  subnet_id       = "aws_subnet.public_subnet.id"
+  security_groups = [aws_security_group.public_ec2_sg.id]
 }
 
 # AWS Private EC2 Security group
