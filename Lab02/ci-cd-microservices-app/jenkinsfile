@@ -1,0 +1,100 @@
+pipeline {
+    agent any  // Sử dụng agent mặc định, có thể là một agent cụ thể
+
+    environment {
+        // Các biến môi trường chung
+        REGISTRY = "docker.io/yourusername"  // Địa chỉ Docker registry (có thể là Docker Hub hoặc ECR)
+        IMAGE_NAME = "user-service"  // Tên image của ứng dụng
+        K8S_NAMESPACE = "default"  // Tên namespace trong Kubernetes
+        K8S_CLUSTER_NAME = "your-cluster-name"  // Tên của EKS/GKE/AKS cluster
+        SONARQUBE_URL = "http://your-sonarqube-server"  // Địa chỉ SonarQube
+        SONARQUBE_TOKEN = credentials('sonarqube-token')  // Token SonarQube đã được cấu hình trong Jenkins Credentials
+        DOCKER_CREDENTIALS = credentials('docker-credentials')  // Docker credentials
+    }
+
+    stages {
+        // Stage 1: Checkout Code
+        stage('Checkout') {
+            steps {
+                checkout scm  // Lấy mã nguồn từ Git repository
+            }
+        }
+
+        // Stage 2: SonarQube Analysis (Kiểm tra chất lượng mã nguồn)
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    // Phân tích mã nguồn với SonarQube
+                    sh """
+                    mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=${IMAGE_NAME} \
+                    -Dsonar.host.url=${SONARQUBE_URL} \
+                    -Dsonar.login=${SONARQUBE_TOKEN}
+                    """
+                }
+            }
+        }
+
+        // Stage 3: Build Docker Image
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image từ Dockerfile trong repository
+                    sh """
+                    docker build -t ${REGISTRY}/${IMAGE_NAME}:${BUILD_NUMBER} .
+                    """
+                }
+            }
+        }
+
+        // Stage 4: Snyk Security Check (Kiểm tra bảo mật)
+        stage('Snyk Security Check') {
+            steps {
+                script {
+                    // Kiểm tra bảo mật với Snyk
+                    sh """
+                    snyk test --all-projects --docker ${REGISTRY}/${IMAGE_NAME}:${BUILD_NUMBER}
+                    """
+                }
+            }
+        }
+
+        // Stage 5: Push Docker Image to Registry
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Đẩy Docker image lên registry (Docker Hub hoặc ECR)
+                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh """
+                        docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+                        docker push ${REGISTRY}/${IMAGE_NAME}:${BUILD_NUMBER}
+                        """
+                    }
+                }
+            }
+        }
+
+        // Stage 6: Deploy to Kubernetes (Triển khai lên Kubernetes)
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Cập nhật Deployment trên Kubernetes
+                    sh """
+                    kubectl config use-context ${K8S_CLUSTER_NAME}  // Chọn đúng cluster
+                    kubectl set image deployment/${IMAGE_NAME} ${IMAGE_NAME}=${REGISTRY}/${IMAGE_NAME}:${BUILD_NUMBER} -n ${K8S_NAMESPACE}  // Cập nhật image mới vào deployment
+                    kubectl rollout status deployment/${IMAGE_NAME} -n ${K8S_NAMESPACE}  // Kiểm tra trạng thái rollout của deployment
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
