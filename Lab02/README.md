@@ -221,7 +221,7 @@ cd Lab02/Cloudformation/
 
 ### Bước 4: Tạo CodePipeline trên AWS để để tự động hóa quy trình build và deploy từ mã nguồn trên CodeCommit.
 
-**Create pipeline --> Choose creation option --> Add source stage -->  Add deploy stage**
+**Create pipeline --> Choose creation option --> Add source stage --> Add build stage --> Add deploy stage**
 
 - Tạo custom pipeline.
 - Chọn Repository và branch đã tạo từ CodeCommit.
