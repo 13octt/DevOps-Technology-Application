@@ -62,14 +62,12 @@ cd .github/workflows
     - name: Checkout Repository
       uses: actions/checkout@v4
 ```
-- Sử dụng action actions/checkout@v4 để kiểm tra mã nguồn của repository từ GitHub về môi trường CI/CD
 
 #### 2. Install Checkov
 ```bash
     - name: "Install Checkov"
       run: pip install checkov
 ```
-- Checkov sẽ giúp  kiểm tra các vấn đề như cấu hình sai, không an toàn hoặc vi phạm các quy tắc bảo mật.
 
 #### 3. Run Checkov
 ```bash
@@ -77,8 +75,6 @@ cd .github/workflows
       run: checkov -f main.tf
       working-directory: Lab02/Terraform/modules/main-modules
 ```
-- Chạy Checkov trên tệp main.tf - tệp cấu hình Terraform chính trong main-modules để kiểm tra các vấn đề bảo mật và các lỗi tiềm ẩn.
-- working-directory: Chỉ định thư mục làm việc nơi chứa tệp main.tf, trong trường hợp này là Lab02/Terraform/modules/main-modules.
 
 #### 4. Terraform Init
 ```bash
@@ -86,8 +82,6 @@ cd .github/workflows
       run: terraform init
       working-directory: Lab02/Terraform/modules/main-modules
 ```
-- Khởi tạo dự án Terraform
-- working-directory: Chỉ định thư mục làm việc là Lab02/Terraform/modules/main-modules.
 
 #### 5. Terraform Init
 ```bash
@@ -95,9 +89,6 @@ cd .github/workflows
       run: terraform init
       working-directory: Lab02/Terraform/modules/main-modules
 ```
-- Khởi tạo dự án Terraform
-- working-directory: Chỉ định thư mục làm việc là Lab02/Terraform/modules/main-modules.
-
 
 #### 6. Terraform Format
 ```bash
@@ -105,9 +96,6 @@ cd .github/workflows
       run: terraform fmt
       working-directory: Lab02/Terraform/modules/
 ```
-- Format Code cho dự án Terraform
-- working-directory: Lab02/Terraform/modules/
-
 
 #### 7. Terraform Plan
 ```bash
@@ -118,10 +106,6 @@ cd .github/workflows
       run: terraform plan -input=false
       working-directory: Lab02/Terraform/modules/main-modules
 ```
-- Mô tả các thay đổi mà Terraform sẽ thực hiện trên hạ tầng, kiểm tra xem các thay đổi có chính xác hay không trước khi thực hiện.
-- AWS_ACCESS_KEY_ID và AWS_SECRET_ACCESS_KEY: Các khóa AWS cần thiết để Terraform có thể tương tác với các dịch vụ AWS. Được cung cấp dưới dạng bí mật thông qua GitHub Secrets.
-- input=false: Cho phép Terraform không yêu cầu đầu vào người dùng trong quá trình thực thi.
-- working-directory: Chỉ định thư mục là Lab02/Terraform/modules/main-modules.
 
 ##### 8. Terraform Apply
 ```bash
@@ -132,12 +116,6 @@ cd .github/workflows
       run: terraform apply -auto-approve -input=false
       working-directory: Lab02/Terraform/modules/main-modules
 ```
-- Trigger khi có sự kiện push vào branch được khai báo cụ thể
-- Triển khai các thay đổi lên hạ tầng dựa trên kế hoạch được tạo ra từ lệnh terraform plan.
-- AWS_ACCESS_KEY_ID và AWS_SECRET_ACCESS_KEY: Các khóa AWS cần thiết để Terraform có thể tương tác với các dịch vụ AWS. Được cung cấp dưới dạng bí mật thông qua GitHub Secrets.
-- input=false: Cho phép Terraform không yêu cầu đầu vào người dùng trong quá trình thực thi.
-- working-directory: Chỉ định thư mục là Lab02/Terraform/modules/main-modules.
-- main modules sẽ gọi vpc modules và ec2 modules để triển khai các hạ tầng.
 
 ### Bước 6: Kiểm tra pipeline trên Github Actions
 
@@ -222,10 +200,6 @@ cd Lab02/Cloudformation/
 ### Bước 4: Tạo CodePipeline trên AWS để để tự động hóa quy trình build và deploy từ mã nguồn trên CodeCommit.
 
 **Create pipeline --> Choose creation option --> Add source stage --> Add build stage --> Add deploy stage**
-
-- Tạo custom pipeline.
-- Chọn Repository và branch đã tạo từ CodeCommit.
-- Start build để tiến hành build và test code.
 
 <p align="center">
   <img src="images/cloudformation/codepipeline/pipeline-success.png" alt="Mô tả hình ảnh">
