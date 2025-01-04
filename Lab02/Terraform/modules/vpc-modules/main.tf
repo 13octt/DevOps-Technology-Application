@@ -6,6 +6,7 @@ resource "aws_vpc" "vpc" {
 
   tags = {
     Name = "${var.env}-vpc"
+
   }
 }
 
@@ -26,7 +27,7 @@ resource "aws_subnet" "public_subnet" {
   map_public_ip_on_launch = "true"
 
   tags = {
-    Name = "${var.env}-public_subnet"
+    Name = "${var.env}-public-subnet"
   }
 }
 
@@ -49,9 +50,9 @@ resource "aws_security_group" "default_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
   }
 
   egress {
@@ -63,6 +64,7 @@ resource "aws_security_group" "default_sg" {
 
   tags = {
     Name = "${var.env}-default-sg"
+
   }
 }
 

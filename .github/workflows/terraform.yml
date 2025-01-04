@@ -2,7 +2,7 @@ name: 'Terraform Deploy with Github Actions'
 
 on:
   push:
-    branches: [ "test" ]
+    branches: [ "lab02/terra" ]
   pull_request:
     branches: [ "main" ]
 
@@ -18,21 +18,20 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: "Install Checkov"
+      run: pip install checkov
+
+    - name: "Run Checkov"
+      run: checkov -f main.tf
+      working-directory: Lab02/Terraform/modules/main-modules
+
     - name: Terraform Init
       run: terraform init
       working-directory: Lab02/Terraform/modules/main-modules
 
-    - name: Terraform Format code MAIN Modules
-      run: terraform fmt -check
-      working-directory: Lab02/Terraform/modules/main-modules
-
-    - name: Terraform Format code VPC Modules
-      run: terraform fmt -check
-      working-directory: Lab02/Terraform/modules/vpc-modules
-
-    - name: Terraform Format code EC2 Modules
-      run: terraform fmt -check
-      working-directory: Lab02/Terraform/modules/ec2-modules
+    - name: Terraform Format
+      run: terraform fmt
+      working-directory: Lab02/Terraform/modules/
 
     - name: Terraform Plan
       env:
@@ -42,10 +41,19 @@ jobs:
       working-directory: Lab02/Terraform/modules/main-modules
 
     - name: Terraform Apply
-      if: (github.ref == 'refs/heads/dev' && github.event_name == 'push') 
+      if: (github.ref == 'refs/heads/lab02/terra' && github.event_name == 'push') 
       env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform apply -auto-approve -input=false
       working-directory: Lab02/Terraform/modules/main-modules
+
+    # - name: "Terraform Destroy"
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #   run: terraform destroy 
+    #   working-directory: Lab02/Terraform/modules/main-modules
+
+
 
